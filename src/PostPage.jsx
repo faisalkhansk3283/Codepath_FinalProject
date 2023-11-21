@@ -40,24 +40,27 @@ function PostPage({ post }) {
           console.error('Error fetching post:', postError);
         } else {
           setCurrentPost(postData);
-          // Set the initial state for edited fields here
-          if (postData) {
-            setEditedTitle(postData.title);
-            setEditedContent(postData.content);
-            setEditedImageUrl(postData.image_url);
-            setEditedUpvotes(postData.upvotes);
+          if (postData && Array.isArray(postData.comments)) {
+            const parsedComments = postData.comments.map(comment => JSON.parse(comment));
+            setComments(parsedComments);
+          } else {
+            setComments([]);
           }
-          // Rest of your code...
         }
       } catch (error) {
         console.error('Error:', error.message);
       }
     };
 
-    fetchPost(); // Invoke fetchPost function
-  //}, [postId]); // Dependency array
-
-    }, [postId]);
+    
+    if (currentPost) {
+        setEditedTitle(currentPost.title);
+        setEditedContent(currentPost.content);
+        setEditedImageUrl(currentPost.image_url);
+        setEditedUpvotes(currentPost.upvotes);
+      }
+      fetchPost();
+    }, [postId, currentPost]);
 
     const handleEdit = () => {
         setIsEditing(true);
